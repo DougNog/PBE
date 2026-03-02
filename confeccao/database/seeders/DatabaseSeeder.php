@@ -2,30 +2,45 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\User;
 use App\Models\Clientes;
+use App\Models\Fornecedor;
+use App\Models\Estoque;
+use App\Models\Pedido;
 
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-        \App\Models\Clientes::factory(10)->create();
+        // CLIENTES
+        Clientes::factory(15)->create();
+
         Clientes::factory()->create([
             'nome' => 'Douglas',
-            'cpf' => '123456789-00',
+            'cpf' => '123.456.789-00',
+            'telefone' => '(19) 99999-9999',
+            'reserva' => 1,
         ]);
-        
+
+        // FORNECEDORES
+        Fornecedor::factory(10)->create();
+
+        // ESTOQUE
+        Estoque::factory(30)->create();
+
+        // PEDIDOS
+        Pedido::factory(20)->create();
+
+        // ADMIN
         User::factory()->create([
             'name' => 'Confecção Douglas',
-            'email' => 'test@confeccao.com',
+            'email' => 'admin@confeccao.com',
+            'password' => bcrypt('123456'),
         ]);
     }
 }
