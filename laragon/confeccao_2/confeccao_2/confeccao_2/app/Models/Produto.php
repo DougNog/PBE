@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Produto extends Model
+{
+    protected $fillable = [
+        'nome',
+        'referencia',
+        'preco_venda',
+        'estoque',
+    ];
+
+    protected $casts = [
+        'preco_venda' => 'decimal:2',
+        'estoque'     => 'integer',
+    ];
+
+    public function itensPedido(): HasMany
+    {
+        return $this->hasMany(ItemPedido::class);
+    }
+}
