@@ -1,0 +1,105 @@
+<x-app-layout>
+    <x-slot name="header"></x-slot>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+        :root{--ink:#0a0a0f;--surface:#f5f4f0;--card:#fff;--muted:#888;--border:#e8e6e1;--accent:#3b5bdb;--red:#ff4c4c;}
+        *{box-sizing:border-box;margin:0;padding:0;}
+        .root{font-family:'DM Sans',sans-serif;background:var(--surface);min-height:100vh;color:var(--ink);}
+        .hero{position:relative;overflow:hidden;background:var(--ink);padding:2.5rem 2.5rem 2rem;}
+        .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 85% -10%,rgba(59,91,219,.45) 0%,transparent 65%),radial-gradient(ellipse 35% 55% at -5% 110%,rgba(112,72,232,.25) 0%,transparent 60%);pointer-events:none;}
+        .hero-inner{position:relative;z-index:1;max-width:720px;margin:0 auto;display:flex;align-items:center;gap:1rem;}
+        .back{display:inline-flex;align-items:center;gap:.4rem;color:rgba(255,255,255,.5);font-size:.82rem;font-weight:500;text-decoration:none;transition:color .2s;flex-shrink:0;}
+        .back:hover{color:#fff;}
+        .divider{width:1px;height:28px;background:rgba(255,255,255,.15);flex-shrink:0;}
+        .hero-title{font-family:'Syne',sans-serif;font-size:clamp(1.3rem,3vw,1.9rem);font-weight:800;color:#fff;letter-spacing:-.03em;}
+        .body{max-width:720px;margin:0 auto;padding:2.5rem 2rem 4rem;}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.04);animation:up .45s ease both;}
+        @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .card-head{padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;}
+        .icon{width:40px;height:40px;border-radius:12px;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+        .ct{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;}
+        .cs{font-size:.8rem;color:var(--muted);margin-top:.1rem;}
+        .card-body{padding:2rem;}
+        .fg{display:grid;gap:1.25rem;}
+        .fg.c2{grid-template-columns:1fr 1fr;}
+        .field{display:flex;flex-direction:column;gap:.45rem;}
+        .field label{font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+        .field input,.field select,.field textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:.8rem 1rem;font-family:'DM Sans',sans-serif;font-size:.92rem;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s,background .2s;}
+        .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,91,219,.12);background:#fff;}
+        .field select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem;}
+        .field textarea{resize:vertical;min-height:100px;}
+        .ferr{font-size:.78rem;color:var(--red);font-weight:500;}
+        .status-preview{display:inline-flex;align-items:center;gap:.35rem;font-size:.78rem;font-weight:700;font-family:'Syne',sans-serif;padding:.3rem .85rem;border-radius:100px;margin-top:.35rem;transition:all .2s;}
+        .status-preview.aberto{background:#e0e7ff;color:#2d45a0;}
+        .status-preview.pendente{background:#fef9ec;color:#92660a;}
+        .status-preview.aprovado,.status-preview.entregue{background:#d9fff3;color:#0c7a58;}
+        .status-preview.cancelado{background:#ffe4e4;color:#b00010;}
+        .flash-error{display:flex;align-items:flex-start;gap:.75rem;background:#fff3f3;border:1px solid #fbc4c4;border-left:4px solid var(--red);color:#9b0000;border-radius:14px;padding:1rem 1.25rem;font-size:.88rem;margin-bottom:1.5rem;}
+        .flash-error ul{margin-left:1rem;margin-top:.25rem;}
+        .card-foot{padding:1.5rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+        .btn-cancel{display:inline-flex;align-items:center;background:transparent;border:1.5px solid var(--border);color:var(--muted);font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;padding:.75rem 1.5rem;border-radius:100px;text-decoration:none;cursor:pointer;transition:all .2s;}
+        .btn-cancel:hover{border-color:var(--ink);color:var(--ink);}
+        .btn-save{display:inline-flex;align-items:center;gap:.5rem;background:var(--accent);color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;padding:.75rem 1.75rem;border-radius:100px;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s,filter .2s;}
+        .btn-save:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 10px 28px rgba(59,91,219,.35);}
+        .btn-del{display:inline-flex;align-items:center;gap:.4rem;background:transparent;border:1.5px solid #fbc4c4;color:var(--red);font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;padding:.65rem 1.2rem;border-radius:100px;cursor:pointer;transition:all .2s;}
+        .btn-del:hover{background:#fff3f3;}
+        @media(max-width:600px){.body{padding:1.5rem 1rem 3rem}.fg.c2{grid-template-columns:1fr}.hero{padding:1.75rem 1.25rem 1.5rem}.card-body{padding:1.25rem}.card-foot{padding:1.25rem;flex-direction:column-reverse}.btn-cancel,.btn-save,.btn-del{width:100%;justify-content:center}}
+    </style>
+    <div class="root">
+        <div class="hero">
+            <div class="hero-inner">
+                <a href="{{ route('pedidos.index') }}" class="back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Pedidos</a>
+                <div class="divider"></div>
+                <span class="hero-title">Editar Pedido</span>
+            </div>
+        </div>
+        <div class="body">
+            @if($errors->any())<div class="flash-error"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><ul>@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>@endif
+            <form action="{{ route('pedidos.update',$pedido->id) }}" method="POST">
+                @csrf @method('PUT')
+                <div class="card">
+                    <div class="card-head"><div class="icon">📋</div><div><div class="ct">Editar pedido</div><div class="cs">#{{ $pedido->numero }} · {{ \Carbon\Carbon::parse($pedido->data)->format('d/m/Y') }}</div></div></div>
+                    <div class="card-body">
+                        <div class="fg">
+                            <div class="fg c2">
+                                <div class="field"><label>Número *</label><input type="text" name="numero" value="{{ old('numero',$pedido->numero) }}" required>@error('numero')<span class="ferr">{{ $message }}</span>@enderror</div>
+                                <div class="field"><label>Data *</label><input type="date" name="data" value="{{ old('data', \Carbon\Carbon::parse($pedido->data)->format('Y-m-d')) }}" required>@error('data')<span class="ferr">{{ $message }}</span>@enderror</div>
+                            </div>
+                            <div class="field">
+                                <label>Status *</label>
+                                <select name="status" id="status" onchange="updatePreview(this)" required>
+                                    <option value="">Selecione</option>
+                                    @foreach(['aberto' => 'Aberto', 'em_producao' => 'Em Produção', 'entregue' => 'Entregue', 'cancelado' => 'Cancelado'] as $val => $label)
+                                        <option value="{{ $val }}" {{ old('status',$pedido->status)==$val?'selected':'' }}>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="status-preview" id="preview" style="display:none"></span>
+                                @error('status')<span class="ferr">{{ $message }}</span>@enderror
+                            </div>
+                            <div class="field"><label>Observação</label><textarea name="observacao">{{ old('observacao',$pedido->observacao) }}</textarea>@error('observacao')<span class="ferr">{{ $message }}</span>@enderror</div>
+                        </div>
+                    </div>
+                    <div class="card-foot">
+                        <div style="display:flex;gap:.6rem;align-items:center;justify-content:flex-end;width:100%;">
+                            <a href="{{ route('pedidos.index') }}" class="btn-cancel">Cancelar</a>
+                            <button type="submit" class="btn-save"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Salvar alterações</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            {{-- Excluir FORA do form de edição --}}
+            <div style="margin-top:.75rem;">
+                <form action="{{ route('pedidos.destroy', $pedido->id) }}" method="POST" onsubmit="return confirm('Excluir pedido #{{ $pedido->numero }}?')">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="btn-del"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Excluir pedido</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        const labels={aberto:'Aberto',em_producao:'Em Produção',entregue:'Entregue',cancelado:'Cancelado'};
+        function updatePreview(el){const p=document.getElementById('preview');if(!el.value){p.style.display='none';return;}p.className='status-preview '+el.value;p.style.display='inline-flex';p.innerHTML=`<span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span> ${labels[el.value]}`;}
+        const sel=document.getElementById('status');if(sel.value)updatePreview(sel);
+    </script>
+</x-app-layout>
