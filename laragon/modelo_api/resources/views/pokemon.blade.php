@@ -61,205 +61,450 @@
         body {
             min-height: 100vh;
             background:
-                radial-gradient(ellipse at top, #fef3f2 0%, transparent 60%),
-                radial-gradient(ellipse at bottom, #fef9c3 0%, transparent 60%),
-                linear-gradient(135deg, #fff1f2 0%, #fef3c7 50%, #dbeafe 100%);
+                radial-gradient(ellipse at top, #e0f2fe 0%, transparent 50%),
+                radial-gradient(ellipse at bottom, #fef3c7 0%, transparent 50%),
+                linear-gradient(180deg, #f0f9ff 0%, #f8fafc 50%, #f1f5f9 100%);
             position: relative;
         }
 
-        /* ============================================
-           SCENE LAYER — arte imersiva por toda a tela
-           ============================================ */
-        .scene {
+        /* ===========================================
+           LABORATÓRIO — cenário em camadas
+           =========================================== */
+        .lab {
             position: fixed;
             inset: 0;
             pointer-events: none;
             z-index: 0;
             overflow: hidden;
+            perspective: 1000px;
         }
 
-        /* Grid decorativo de fundo */
-        .scene-grid {
+        .lab-layer {
             position: absolute;
             inset: 0;
-            background-image:
-                linear-gradient(rgba(239, 68, 68, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(239, 68, 68, 0.04) 1px, transparent 1px);
-            background-size: 60px 60px;
-            mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
-            -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
+            will-change: transform;
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        /* ============================================
-           POKÉBOLAS GRANDES — com detalhes
-           ============================================ */
-        .pokeball {
+        /* Luz ambiente superior */
+        .lab-light {
             position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120%;
+            height: 60%;
+            background: radial-gradient(ellipse at center, rgba(186, 230, 253, 0.5) 0%, transparent 60%);
+            filter: blur(40px);
+            animation: lightPulse 6s ease-in-out infinite;
+        }
+        @keyframes lightPulse {
+            0%, 100% { opacity: 0.8; }
+            50%      { opacity: 1; }
+        }
+
+        /* Grid de piso perspectivo */
+        .lab-floor {
+            position: absolute;
+            bottom: 0;
+            left: -20%;
+            width: 140%;
+            height: 40%;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.15) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(400px) rotateX(60deg);
+            transform-origin: center top;
+            mask-image: linear-gradient(to bottom, black, transparent 80%);
+            -webkit-mask-image: linear-gradient(to bottom, black, transparent 80%);
+            animation: floorMove 8s linear infinite;
+        }
+        @keyframes floorMove {
+            from { background-position: 0 0; }
+            to   { background-position: 0 50px; }
+        }
+
+        /* ===========================================
+           COMPUTADOR / MONITOR (fundo)
+           =========================================== */
+        .monitor {
+            position: absolute;
+            background: #1e293b;
+            border-radius: 8px;
+            border: 3px solid #0f172a;
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.15),
+                inset 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+        .monitor::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: linear-gradient(180deg, #0c1e3a 0%, #1e293b 100%);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .monitor-screen {
+            position: absolute;
+            inset: 8px;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+        .monitor-1 {
+            top: 8%;
+            left: 4%;
+            width: 200px;
+            height: 140px;
+        }
+        .monitor-2 {
+            top: 12%;
+            right: 5%;
+            width: 180px;
+            height: 130px;
+        }
+        .monitor-3 {
+            bottom: 30%;
+            right: 3%;
+            width: 160px;
+            height: 110px;
+        }
+
+        /* Conteúdo da tela: gráfico de linha animado */
+        .chart-line {
+            position: absolute;
+            bottom: 20%;
+            left: 0;
+            width: 100%;
+            height: 60%;
+        }
+        .chart-line svg {
+            width: 100%;
+            height: 100%;
+        }
+        .chart-path {
+            stroke: #60a5fa;
+            stroke-width: 2;
+            fill: none;
+            filter: drop-shadow(0 0 4px #60a5fa);
+            stroke-dasharray: 300;
+            animation: drawLine 4s ease-in-out infinite;
+        }
+        @keyframes drawLine {
+            0%   { stroke-dashoffset: 300; }
+            50%  { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -300; }
+        }
+
+        /* Texto "dados" no monitor */
+        .monitor-text {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            color: #60a5fa;
+            line-height: 1.5;
+            text-shadow: 0 0 4px #60a5fa;
+        }
+        .monitor-blink {
+            display: inline-block;
+            width: 4px;
+            height: 8px;
+            background: #60a5fa;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* Barras de progresso no monitor */
+        .monitor-bars {
+            position: absolute;
+            top: 28px;
+            left: 8px;
+            right: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .monitor-bar {
+            height: 4px;
+            background: rgba(96, 165, 250, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .monitor-bar-fill {
+            height: 100%;
+            background: #60a5fa;
+            box-shadow: 0 0 6px #60a5fa;
+            animation: barFill 3s ease-in-out infinite;
+        }
+        @keyframes barFill {
+            0%, 100% { width: 30%; }
+            50%      { width: 85%; }
+        }
+
+        /* ===========================================
+           SUPORTES DE POKÉBOLA (máquina clássica)
+           =========================================== */
+        .ball-holder {
+            position: absolute;
+            width: 80px;
+            height: 100px;
+        }
+        .ball-holder-base {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 20px;
+            background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+            border: 2px solid #475569;
+            border-radius: 4px 4px 8px 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .ball-holder-pillar {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 30px;
+            background: linear-gradient(180deg, #64748b, #334155);
+            border-radius: 2px;
+        }
+        .ball-holder-top {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+        }
+        .holder-ball {
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             background:
                 linear-gradient(to bottom,
                     #ef4444 0%, #ef4444 48%,
                     #1a1a1a 48%, #1a1a1a 52%,
-                    #ffffff 52%, #ffffff 100%);
+                    #f8fafc 52%, #f8fafc 100%);
+            border: 2.5px solid #1a1a1a;
+            position: relative;
             box-shadow:
-                0 20px 40px rgba(0,0,0,0.12),
-                inset -8px -8px 20px rgba(0,0,0,0.15),
-                inset 8px 8px 20px rgba(255,255,255,0.2);
-            border: 4px solid #1a1a1a;
+                0 6px 15px rgba(239, 68, 68, 0.3),
+                inset -4px -4px 10px rgba(0,0,0,0.15),
+                inset 4px 4px 10px rgba(255,255,255,0.3);
+            animation: ballFloat 3s ease-in-out infinite;
         }
-        .pokeball::after {
+        .holder-ball::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            width: 25%;
+            height: 15%;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            filter: blur(3px);
+        }
+        .holder-ball::after {
             content: '';
             position: absolute;
             top: 50%; left: 50%;
-            width: 24%; height: 24%;
-            background: radial-gradient(circle at 35% 35%, #fff, #e5e7eb);
-            border: 4px solid #1a1a1a;
+            width: 30%; height: 30%;
+            background: radial-gradient(circle at 35% 35%, #fff, #cbd5e1);
+            border: 2.5px solid #1a1a1a;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
         }
-        /* Brilho na pokébola */
-        .pokeball::before {
+        @keyframes ballFloat {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-6px); }
+        }
+
+        /* Luz embaixo da pokébola no suporte */
+        .ball-holder-glow {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 8px;
+            background: radial-gradient(ellipse, #ef4444 0%, transparent 70%);
+            filter: blur(4px);
+            opacity: 0.6;
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(1); }
+            50%      { opacity: 0.7; transform: translateX(-50%) scale(1.2); }
+        }
+
+        .bh-1 { top: 45%; left: 7%; }
+        .bh-2 { top: 52%; left: 18%; }
+        .bh-3 { top: 45%; right: 7%; }
+        .bh-4 { top: 52%; right: 18%; }
+        .bh-5 { top: 28%; left: 28%; transform: scale(0.8); }
+        .bh-6 { top: 28%; right: 28%; transform: scale(0.8); }
+
+        /* ===========================================
+           TUBOS DE ENSAIO
+           =========================================== */
+        .tube {
+            position: absolute;
+            width: 24px;
+            height: 80px;
+            background: linear-gradient(180deg,
+                rgba(255,255,255,0.4) 0%,
+                rgba(255,255,255,0.2) 30%,
+                rgba(59, 130, 246, 0.3) 40%,
+                rgba(59, 130, 246, 0.6) 100%);
+            border: 2px solid #1e293b;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+        }
+        .tube::before {
             content: '';
             position: absolute;
-            top: 12%; left: 18%;
-            width: 30%; height: 20%;
-            background: rgba(255,255,255,0.4);
+            top: 40%;
+            left: 0; right: 0;
+            height: 60%;
+            background: linear-gradient(180deg,
+                rgba(96, 165, 250, 0.8),
+                rgba(59, 130, 246, 1));
+            animation: bubble 3s ease-in-out infinite;
+        }
+        .tube::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.7);
             border-radius: 50%;
-            filter: blur(8px);
+            animation: bubbleRise 2s ease-in-out infinite;
+        }
+        @keyframes bubble {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-3px); }
+        }
+        @keyframes bubbleRise {
+            0%   { transform: translate(-50%, 20px); opacity: 0; }
+            50%  { opacity: 1; }
+            100% { transform: translate(-50%, -30px); opacity: 0; }
         }
 
-        .pb-huge-1 {
-            width: 320px; height: 320px;
-            top: -80px; left: -80px;
-            opacity: 0.35;
-            animation: rotateSlow 40s linear infinite;
-        }
-        .pb-huge-2 {
-            width: 280px; height: 280px;
-            bottom: -60px; right: -60px;
-            opacity: 0.35;
-            animation: rotateSlow 50s linear infinite reverse;
-        }
-        .pb-med-1 {
-            width: 140px; height: 140px;
-            top: 12%; right: 8%;
-            opacity: 0.5;
-            animation: floatBall 12s ease-in-out infinite;
-        }
-        .pb-med-2 {
-            width: 120px; height: 120px;
-            bottom: 15%; left: 5%;
-            opacity: 0.5;
-            animation: floatBall 10s ease-in-out infinite -3s;
-        }
-        .pb-small-1 {
-            width: 70px; height: 70px;
-            top: 40%; left: 8%;
-            opacity: 0.6;
-            animation: floatBall 8s ease-in-out infinite -5s;
-        }
-        .pb-small-2 {
-            width: 60px; height: 60px;
-            top: 65%; right: 12%;
-            opacity: 0.6;
-            animation: floatBall 9s ease-in-out infinite -2s;
-        }
-        @keyframes rotateSlow {
-            to { transform: rotate(360deg); }
-        }
-        @keyframes floatBall {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50%      { transform: translateY(-25px) rotate(15deg); }
-        }
+        .tube-1 { top: 60%; left: 15%; }
+        .tube-2 { top: 63%; left: 22%; animation-delay: -1s; }
+        .tube-3 { top: 60%; right: 15%; }
+        .tube-4 { top: 63%; right: 22%; animation-delay: -1.5s; }
 
-        /* ============================================
-           SILHUETAS DE POKÉMON (SVG) coloridas
-           ============================================ */
-        .mon {
+        /* Líquido diferente no tubo */
+        .tube.tube-red::before { background: linear-gradient(180deg, rgba(252, 165, 165, 0.8), rgba(239, 68, 68, 1)); }
+        .tube.tube-yellow::before { background: linear-gradient(180deg, rgba(253, 224, 71, 0.8), rgba(234, 179, 8, 1)); }
+        .tube.tube-green::before { background: linear-gradient(180deg, rgba(134, 239, 172, 0.8), rgba(34, 197, 94, 1)); }
+
+        /* ===========================================
+           BANCADA
+           =========================================== */
+        .bench {
             position: absolute;
-            animation: floatMon 8s ease-in-out infinite;
+            bottom: 15%;
+            left: -5%;
+            right: -5%;
+            height: 30px;
+            background: linear-gradient(180deg,
+                #cbd5e1 0%,
+                #94a3b8 30%,
+                #64748b 100%);
+            border-top: 3px solid #475569;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         }
-        .mon svg { width: 100%; height: auto; display: block; }
-        @keyframes floatMon {
-            0%, 100% { transform: translateY(0) rotate(-2deg); }
-            50%      { transform: translateY(-15px) rotate(2deg); }
-        }
-        .mon-1 { width: 160px; top: 8%; left: 8%; animation-delay: 0s; opacity: 0.8; }
-        .mon-2 { width: 130px; top: 20%; right: 20%; animation-delay: -2s; opacity: 0.7; }
-        .mon-3 { width: 140px; bottom: 18%; right: 6%; animation-delay: -4s; opacity: 0.75; }
-        .mon-4 { width: 110px; bottom: 10%; left: 18%; animation-delay: -6s; opacity: 0.7; }
-        .mon-5 { width: 90px;  top: 55%; left: 14%; animation-delay: -3s; opacity: 0.65; }
-        .mon-6 { width: 100px; top: 50%; right: 10%; animation-delay: -5s; opacity: 0.65; }
-
-        /* ============================================
-           FOLHAS / ELEMENTOS NATURAIS
-           ============================================ */
-        .leaf {
+        .bench::before {
+            content: '';
             position: absolute;
-            width: 40px; height: 40px;
-            animation: leafFall linear infinite;
-            opacity: 0.4;
-        }
-        @keyframes leafFall {
-            0%   { transform: translateY(-100px) rotate(0deg); }
-            100% { transform: translateY(calc(100vh + 100px)) rotate(720deg); }
+            top: 0;
+            left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(96, 165, 250, 0.3) 50%,
+                transparent 100%);
         }
 
-        /* ============================================
-           RAIOS ELÉTRICOS
-           ============================================ */
-        .bolt {
+        /* ===========================================
+           PAINÉIS LATERAIS (rack de equipamento)
+           =========================================== */
+        .panel {
             position: absolute;
-            color: #facc15;
-            filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.6));
-            animation: boltFlash 3s ease-in-out infinite;
-            opacity: 0;
+            width: 60px;
+            height: 120px;
+            background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+            border: 2px solid #0f172a;
+            border-radius: 4px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
-        @keyframes boltFlash {
-            0%, 90%, 100% { opacity: 0; transform: scale(0.8); }
-            45%, 55%      { opacity: 0.7; transform: scale(1); }
-        }
-
-        /* ============================================
-           ESTRELINHAS / PONTOS DE LUZ
-           ============================================ */
-        .sparkle {
+        .panel-light {
             position: absolute;
             width: 6px;
             height: 6px;
-            background: #facc15;
             border-radius: 50%;
-            box-shadow: 0 0 12px #facc15;
-            animation: sparkleFade 4s ease-in-out infinite;
-            opacity: 0;
+            left: 8px;
+            box-shadow: 0 0 6px currentColor;
+            animation: panelBlink 1.5s ease-in-out infinite;
         }
-        @keyframes sparkleFade {
-            0%, 100% { opacity: 0; transform: scale(0); }
-            50%      { opacity: 1; transform: scale(1); }
+        @keyframes panelBlink {
+            0%, 100% { opacity: 0.3; }
+            50%      { opacity: 1; }
+        }
+        .panel-1 { top: 20%; left: 2%; }
+        .panel-2 { top: 20%; right: 2%; }
+
+        /* ===========================================
+           PARTÍCULAS DE DADOS (números flutuando)
+           =========================================== */
+        .data-particle {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: rgba(59, 130, 246, 0.5);
+            animation: dataFloat 8s linear infinite;
+            white-space: nowrap;
+        }
+        @keyframes dataFloat {
+            0%   { transform: translateY(100vh); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { transform: translateY(-20vh); opacity: 0; }
         }
 
-        /* ============================================
-           CARD — ilha de calma
-           ============================================ */
-        .fade-up {
-            animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-        }
+        /* ===========================================
+           CARD PRINCIPAL
+           =========================================== */
+        .fade-up { animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(12px); }
             to   { opacity: 1; transform: translateY(0); }
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(24px) saturate(180%);
             -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.8);
             border-radius: 24px;
             box-shadow:
                 0 1px 2px rgba(0,0,0,0.04),
                 0 20px 40px rgba(0,0,0,0.08),
-                0 40px 80px rgba(239, 68, 68, 0.08);
+                0 40px 80px rgba(59, 130, 246, 0.08);
             transition: all 0.4s ease;
             position: relative;
         }
@@ -303,7 +548,7 @@
 
         .pokemon-stage {
             background:
-                radial-gradient(circle at center, rgba(239, 68, 68, 0.06) 0%, transparent 60%),
+                radial-gradient(circle at center, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
                 linear-gradient(180deg, #fafafa 0%, #f4f4f5 100%);
             border-radius: 16px;
             position: relative;
@@ -315,11 +560,10 @@
             top: -40px; right: -40px;
             width: 140px; height: 140px;
             border-radius: 50%;
-            background:
-                linear-gradient(to bottom,
-                    #ef4444 0%, #ef4444 48%,
-                    #1a1a1a 48%, #1a1a1a 52%,
-                    #ffffff 52%, #ffffff 100%);
+            background: linear-gradient(to bottom,
+                #ef4444 0%, #ef4444 48%,
+                #1a1a1a 48%, #1a1a1a 52%,
+                #ffffff 52%, #ffffff 100%);
             border: 4px solid #1a1a1a;
             opacity: 0.1;
         }
@@ -346,12 +590,9 @@
         }
 
         .type-badge {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            padding: 5px 12px;
-            border-radius: 999px;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 0.04em; text-transform: uppercase;
+            padding: 5px 12px; border-radius: 999px;
             border: 1px solid;
         }
         .type-fire     { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
@@ -374,59 +615,38 @@
         .type-steel    { background: #f8fafc; color: #334155; border-color: #cbd5e1; }
 
         .measure-card {
-            background: #fafafa;
-            border: 1px solid rgba(0,0,0,0.04);
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
+            background: #fafafa; border: 1px solid rgba(0,0,0,0.04);
+            border-radius: 12px; padding: 12px; text-align: center;
         }
         .measure-label {
-            font-size: 10px;
-            font-weight: 500;
-            color: #71717a;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
+            font-size: 10px; font-weight: 500; color: #71717a;
+            letter-spacing: 0.06em; text-transform: uppercase;
         }
         .measure-value {
-            font-size: 18px;
-            font-weight: 600;
-            color: #0a0a0a;
-            letter-spacing: -0.02em;
-            font-variant-numeric: tabular-nums;
+            font-size: 18px; font-weight: 600; color: #0a0a0a;
+            letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
             margin-top: 2px;
         }
 
         .stat-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
         .stat-row:last-child { margin-bottom: 0; }
         .stat-name {
-            font-size: 11px;
-            font-weight: 500;
-            color: #71717a;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            width: 68px;
-            flex-shrink: 0;
+            font-size: 11px; font-weight: 500; color: #71717a;
+            letter-spacing: 0.04em; text-transform: uppercase;
+            width: 68px; flex-shrink: 0;
         }
         .stat-number {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 500;
-            color: #0a0a0a;
-            width: 28px;
-            text-align: right;
-            flex-shrink: 0;
+            font-size: 12px; font-weight: 500; color: #0a0a0a;
+            width: 28px; text-align: right; flex-shrink: 0;
             font-variant-numeric: tabular-nums;
         }
         .stat-bar {
-            flex: 1;
-            height: 6px;
-            background: #f4f4f5;
-            border-radius: 999px;
-            overflow: hidden;
+            flex: 1; height: 6px; background: #f4f4f5;
+            border-radius: 999px; overflow: hidden;
         }
         .stat-fill {
-            height: 100%;
-            border-radius: 999px;
+            height: 100%; border-radius: 999px;
             transform-origin: left;
             animation: fillBar 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
             transform: scaleX(0);
@@ -439,46 +659,28 @@
         .stat-elite { background: linear-gradient(90deg, #0a0a0a, #ef4444); }
 
         .section-title {
-            font-size: 10px;
-            font-weight: 600;
-            color: #a1a1aa;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 10px; font-weight: 600; color: #a1a1aa;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
         }
         .section-title::after {
-            content: '';
-            flex: 1;
-            height: 1px;
+            content: ''; flex: 1; height: 1px;
             background: linear-gradient(90deg, rgba(0,0,0,0.08), transparent);
         }
 
         .ability {
-            display: inline-block;
-            font-size: 11px;
-            font-weight: 500;
-            color: #52525b;
-            background: #fafafa;
-            border: 1px solid rgba(0,0,0,0.06);
-            padding: 4px 10px;
-            border-radius: 6px;
-            margin-right: 4px;
-            margin-bottom: 4px;
+            display: inline-block; font-size: 11px; font-weight: 500;
+            color: #52525b; background: #fafafa;
+            border: 1px solid rgba(0,0,0,0.06); padding: 4px 10px;
+            border-radius: 6px; margin-right: 4px; margin-bottom: 4px;
             text-transform: capitalize;
         }
         .ability.hidden-ability {
-            background: #fff;
-            border-style: dashed;
-            color: #71717a;
+            background: #fff; border-style: dashed; color: #71717a;
         }
 
         .empty-dot {
-            width: 8px;
-            height: 8px;
-            background: #0a0a0a;
+            width: 8px; height: 8px; background: #0a0a0a;
             border-radius: 50%;
             animation: pulse 2s ease-in-out infinite;
         }
@@ -488,169 +690,160 @@
         }
 
         .error {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-            font-size: 13px;
-            font-weight: 500;
+            background: #fef2f2; border: 1px solid #fecaca;
+            color: #991b1b; font-size: 13px; font-weight: 500;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
 
         .total-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 12px;
-            margin-top: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 12px; margin-top: 12px;
             border-top: 1px solid rgba(0,0,0,0.06);
         }
         .total-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: #0a0a0a;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
+            font-size: 11px; font-weight: 600; color: #0a0a0a;
+            letter-spacing: 0.04em; text-transform: uppercase;
         }
         .total-value {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            font-weight: 600;
-            color: #0a0a0a;
+            font-size: 14px; font-weight: 600; color: #0a0a0a;
+        }
+
+        /* Cursor custom de visor */
+        body {
+            cursor: crosshair;
         }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-6">
 
-    {{-- ============ CENA DE FUNDO ============ --}}
-    <div class="scene">
-        <div class="scene-grid"></div>
+    {{-- ============ LABORATÓRIO ============ --}}
+    <div class="lab">
 
-        {{-- Pokébolas grandes decorativas --}}
-        <div class="pokeball pb-huge-1"></div>
-        <div class="pokeball pb-huge-2"></div>
-        <div class="pokeball pb-med-1"></div>
-        <div class="pokeball pb-med-2"></div>
-        <div class="pokeball pb-small-1"></div>
-        <div class="pokeball pb-small-2"></div>
+        {{-- Luz ambiente --}}
+        <div class="lab-light"></div>
 
-        {{-- Pikachu (canto superior esquerdo) --}}
-        <div class="mon mon-1">
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <g>
-                    <path d="M60 40 L40 10 L55 45 Q75 42 100 45 Q125 42 145 45 L160 10 L140 40 Q170 60 170 110 Q170 160 130 175 Q100 182 70 175 Q30 160 30 110 Q30 60 60 40 Z"
-                          fill="#fbbf24" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
-                    <path d="M50 15 L55 40 L65 38 Z M150 15 L145 40 L135 38 Z"
-                          fill="#1a1a1a"/>
-                    <circle cx="75" cy="95" r="8" fill="#1a1a1a"/>
-                    <circle cx="125" cy="95" r="8" fill="#1a1a1a"/>
-                    <circle cx="77" cy="92" r="2.5" fill="#fff"/>
-                    <circle cx="127" cy="92" r="2.5" fill="#fff"/>
-                    <circle cx="55" cy="115" r="10" fill="#ef4444" opacity="0.8"/>
-                    <circle cx="145" cy="115" r="10" fill="#ef4444" opacity="0.8"/>
-                    <path d="M90 115 Q100 125 110 115" stroke="#1a1a1a" stroke-width="3" fill="none" stroke-linecap="round"/>
-                    <circle cx="100" cy="108" r="3" fill="#1a1a1a"/>
-                </g>
-            </svg>
+        {{-- Piso com grid perspectivo --}}
+        <div class="lab-floor"></div>
+
+        {{-- CAMADA 1 - profundidade máxima (se move menos) --}}
+        <div class="lab-layer" data-depth="0.02">
+            {{-- Painéis laterais --}}
+            <div class="panel panel-1">
+                <div class="panel-light" style="top: 10px; color: #ef4444;"></div>
+                <div class="panel-light" style="top: 20px; color: #facc15; animation-delay: 0.3s;"></div>
+                <div class="panel-light" style="top: 30px; color: #22c55e; animation-delay: 0.6s;"></div>
+                <div class="panel-light" style="top: 40px; color: #60a5fa; animation-delay: 0.9s;"></div>
+                <div class="panel-light" style="top: 50px; color: #a855f7; animation-delay: 1.2s;"></div>
+            </div>
+            <div class="panel panel-2">
+                <div class="panel-light" style="top: 10px; color: #22c55e;"></div>
+                <div class="panel-light" style="top: 20px; color: #60a5fa; animation-delay: 0.4s;"></div>
+                <div class="panel-light" style="top: 30px; color: #ef4444; animation-delay: 0.8s;"></div>
+                <div class="panel-light" style="top: 40px; color: #facc15; animation-delay: 1.2s;"></div>
+                <div class="panel-light" style="top: 50px; color: #a855f7; animation-delay: 1.6s;"></div>
+            </div>
         </div>
 
-        {{-- Pokébola com asas estilizada (superior direito) --}}
-        <div class="mon mon-2">
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="100" cy="100" r="60" fill="#ef4444" stroke="#1a1a1a" stroke-width="4"/>
-                <path d="M40 100 L160 100" stroke="#1a1a1a" stroke-width="8"/>
-                <path d="M40 100 A60 60 0 0 0 160 100" fill="#fff"/>
-                <circle cx="100" cy="100" r="15" fill="#fff" stroke="#1a1a1a" stroke-width="4"/>
-                <circle cx="100" cy="100" r="6" fill="#e5e7eb"/>
-                <path d="M40 100 Q10 70 0 90 Q15 100 40 100 Z" fill="#60a5fa" stroke="#1a1a1a" stroke-width="3"/>
-                <path d="M160 100 Q190 70 200 90 Q185 100 160 100 Z" fill="#60a5fa" stroke="#1a1a1a" stroke-width="3"/>
-            </svg>
+        {{-- CAMADA 2 - monitores --}}
+        <div class="lab-layer" data-depth="0.05">
+            <div class="monitor monitor-1">
+                <div class="monitor-screen">
+                    <div class="monitor-text">&gt; SCAN_ACTIVE<br>&gt; DNA: 0x4A9F<span class="monitor-blink"></span></div>
+                    <div class="monitor-bars">
+                        <div class="monitor-bar"><div class="monitor-bar-fill" style="animation-delay: 0s;"></div></div>
+                        <div class="monitor-bar"><div class="monitor-bar-fill" style="animation-delay: 0.4s;"></div></div>
+                        <div class="monitor-bar"><div class="monitor-bar-fill" style="animation-delay: 0.8s;"></div></div>
+                    </div>
+                    <div class="chart-line">
+                        <svg viewBox="0 0 200 60" preserveAspectRatio="none">
+                            <path class="chart-path" d="M0,40 Q25,15 50,30 T100,20 T150,35 T200,15"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="monitor monitor-2">
+                <div class="monitor-screen">
+                    <div class="monitor-text">&gt; POKEDEX_V2.3<br>&gt; LOADING...<span class="monitor-blink"></span></div>
+                    <div class="monitor-bars">
+                        <div class="monitor-bar"><div class="monitor-bar-fill" style="animation-delay: 0.2s;"></div></div>
+                        <div class="monitor-bar"><div class="monitor-bar-fill" style="animation-delay: 0.6s;"></div></div>
+                    </div>
+                    <div class="chart-line">
+                        <svg viewBox="0 0 200 60" preserveAspectRatio="none">
+                            <path class="chart-path" d="M0,30 L30,20 L60,45 L90,15 L120,35 L150,25 L180,40 L200,20" style="animation-delay: -2s;"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="monitor monitor-3">
+                <div class="monitor-screen">
+                    <div class="monitor-text">&gt; ANALYSIS<br>&gt; 94.7%<span class="monitor-blink"></span></div>
+                    <div class="monitor-bars">
+                        <div class="monitor-bar"><div class="monitor-bar-fill" style="animation-delay: 0.1s;"></div></div>
+                        <div class="monitor-bar"><div class="monitor-bar-fill" style="animation-delay: 0.5s;"></div></div>
+                        <div class="monitor-bar"><div class="monitor-bar-fill" style="animation-delay: 0.9s;"></div></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        {{-- Charmander (inferior direito) --}}
-        <div class="mon mon-3">
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <g>
-                    <path d="M140 60 Q155 40 165 20 Q170 35 160 55 Z" fill="#f97316" stroke="#1a1a1a" stroke-width="3"/>
-                    <path d="M145 55 Q155 40 162 28 Q163 38 158 50 Z" fill="#fbbf24"/>
-                    <ellipse cx="100" cy="110" rx="55" ry="60" fill="#f97316" stroke="#1a1a1a" stroke-width="3"/>
-                    <ellipse cx="100" cy="130" rx="35" ry="40" fill="#fed7aa"/>
-                    <circle cx="82" cy="95" r="8" fill="#1a1a1a"/>
-                    <circle cx="118" cy="95" r="8" fill="#1a1a1a"/>
-                    <circle cx="84" cy="92" r="2.5" fill="#fff"/>
-                    <circle cx="120" cy="92" r="2.5" fill="#fff"/>
-                    <path d="M90 115 Q100 122 110 115" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                </g>
-            </svg>
+        {{-- CAMADA 3 - suportes de pokébola (no meio) --}}
+        <div class="lab-layer" data-depth="0.08">
+            <div class="ball-holder bh-1">
+                <div class="ball-holder-glow"></div>
+                <div class="ball-holder-base"></div>
+                <div class="ball-holder-pillar"></div>
+                <div class="ball-holder-top"><div class="holder-ball"></div></div>
+            </div>
+            <div class="ball-holder bh-2">
+                <div class="ball-holder-glow"></div>
+                <div class="ball-holder-base"></div>
+                <div class="ball-holder-pillar"></div>
+                <div class="ball-holder-top"><div class="holder-ball" style="animation-delay: -0.5s;"></div></div>
+            </div>
+            <div class="ball-holder bh-3">
+                <div class="ball-holder-glow"></div>
+                <div class="ball-holder-base"></div>
+                <div class="ball-holder-pillar"></div>
+                <div class="ball-holder-top"><div class="holder-ball" style="animation-delay: -1s;"></div></div>
+            </div>
+            <div class="ball-holder bh-4">
+                <div class="ball-holder-glow"></div>
+                <div class="ball-holder-base"></div>
+                <div class="ball-holder-pillar"></div>
+                <div class="ball-holder-top"><div class="holder-ball" style="animation-delay: -1.5s;"></div></div>
+            </div>
+            <div class="ball-holder bh-5">
+                <div class="ball-holder-glow"></div>
+                <div class="ball-holder-base"></div>
+                <div class="ball-holder-pillar"></div>
+                <div class="ball-holder-top"><div class="holder-ball" style="animation-delay: -0.3s;"></div></div>
+            </div>
+            <div class="ball-holder bh-6">
+                <div class="ball-holder-glow"></div>
+                <div class="ball-holder-base"></div>
+                <div class="ball-holder-pillar"></div>
+                <div class="ball-holder-top"><div class="holder-ball" style="animation-delay: -2s;"></div></div>
+            </div>
         </div>
 
-        {{-- Bulbasaur (inferior esquerdo) --}}
-        <div class="mon mon-4">
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <g>
-                    <ellipse cx="100" cy="120" rx="60" ry="50" fill="#86efac" stroke="#1a1a1a" stroke-width="3"/>
-                    <ellipse cx="100" cy="75" rx="45" ry="35" fill="#4ade80" stroke="#1a1a1a" stroke-width="3"/>
-                    <path d="M60 65 Q55 45 70 40 Q78 55 75 70 Z" fill="#22c55e" stroke="#1a1a1a" stroke-width="2"/>
-                    <path d="M140 65 Q145 45 130 40 Q122 55 125 70 Z" fill="#22c55e" stroke="#1a1a1a" stroke-width="2"/>
-                    <circle cx="82" cy="80" r="7" fill="#1a1a1a"/>
-                    <circle cx="118" cy="80" r="7" fill="#1a1a1a"/>
-                    <circle cx="84" cy="77" r="2.5" fill="#fff"/>
-                    <circle cx="120" cy="77" r="2.5" fill="#fff"/>
-                    <path d="M90 95 Q100 102 110 95" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                </g>
-            </svg>
+        {{-- CAMADA 4 - tubos de ensaio (frente) --}}
+        <div class="lab-layer" data-depth="0.12">
+            <div class="tube tube-1 tube-red"></div>
+            <div class="tube tube-2 tube-yellow"></div>
+            <div class="tube tube-3 tube-green"></div>
+            <div class="tube tube-4"></div>
         </div>
 
-        {{-- Squirtle (meio esquerda) --}}
-        <div class="mon mon-5">
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <g>
-                    <ellipse cx="100" cy="120" rx="55" ry="50" fill="#a16207" stroke="#1a1a1a" stroke-width="3"/>
-                    <ellipse cx="100" cy="115" rx="45" ry="40" fill="#fbbf24"/>
-                    <ellipse cx="100" cy="75" rx="40" ry="35" fill="#60a5fa" stroke="#1a1a1a" stroke-width="3"/>
-                    <circle cx="85" cy="75" r="7" fill="#1a1a1a"/>
-                    <circle cx="115" cy="75" r="7" fill="#1a1a1a"/>
-                    <circle cx="87" cy="72" r="2.5" fill="#fff"/>
-                    <circle cx="117" cy="72" r="2.5" fill="#fff"/>
-                    <path d="M90 90 Q100 96 110 90" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                </g>
-            </svg>
-        </div>
+        {{-- Bancada (estática, no chão) --}}
+        <div class="bench"></div>
 
-        {{-- Pokébola Great Ball (meio direita) --}}
-        <div class="mon mon-6">
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="100" cy="100" r="70" fill="#fff" stroke="#1a1a1a" stroke-width="4"/>
-                <path d="M30 100 A70 70 0 0 1 170 100" fill="#3b82f6" stroke="#1a1a1a" stroke-width="4"/>
-                <path d="M50 60 Q70 40 100 50" stroke="#ef4444" stroke-width="6" fill="none" stroke-linecap="round"/>
-                <path d="M150 60 Q130 40 100 50" stroke="#ef4444" stroke-width="6" fill="none" stroke-linecap="round"/>
-                <path d="M30 100 L170 100" stroke="#1a1a1a" stroke-width="8"/>
-                <circle cx="100" cy="100" r="18" fill="#fff" stroke="#1a1a1a" stroke-width="4"/>
-                <circle cx="100" cy="100" r="8" fill="#e5e7eb"/>
-            </svg>
-        </div>
-
-        {{-- Raios elétricos --}}
-        <svg class="bolt" style="top: 20%; left: 40%; width: 40px; animation-delay: 0s;" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M13 2 L4 14 L11 14 L9 22 L20 10 L13 10 Z"/>
-        </svg>
-        <svg class="bolt" style="top: 70%; right: 30%; width: 30px; animation-delay: 1s;" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M13 2 L4 14 L11 14 L9 22 L20 10 L13 10 Z"/>
-        </svg>
-        <svg class="bolt" style="top: 45%; left: 45%; width: 25px; animation-delay: 2s;" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M13 2 L4 14 L11 14 L9 22 L20 10 L13 10 Z"/>
-        </svg>
-
-        {{-- Estrelinhas --}}
-        <div class="sparkle" style="top: 15%; left: 30%; animation-delay: 0s;"></div>
-        <div class="sparkle" style="top: 30%; right: 35%; animation-delay: 1s;"></div>
-        <div class="sparkle" style="bottom: 25%; left: 40%; animation-delay: 2s;"></div>
-        <div class="sparkle" style="top: 60%; right: 20%; animation-delay: 1.5s;"></div>
-        <div class="sparkle" style="top: 75%; left: 25%; animation-delay: 0.5s;"></div>
-        <div class="sparkle" style="top: 35%; left: 60%; animation-delay: 2.5s;"></div>
-
-        {{-- Folhas caindo (geradas via JS) --}}
-        <div id="leaves"></div>
+        {{-- Partículas de dados flutuando --}}
+        <div id="data-particles"></div>
     </div>
 
     {{-- ============ CARD PRINCIPAL ============ --}}
@@ -670,13 +863,9 @@
 
         <form method="GET" action="" class="mb-5">
             <div class="flex gap-2">
-                <input
-                    type="text"
-                    name="pokemon"
-                    placeholder="Buscar por nome ou número"
-                    value="{{ request('pokemon') }}"
-                    class="input flex-1 rounded-xl px-4 py-2.5 text-sm"
-                >
+                <input type="text" name="pokemon" placeholder="Buscar por nome ou número"
+                       value="{{ request('pokemon') }}"
+                       class="input flex-1 rounded-xl px-4 py-2.5 text-sm">
                 <button type="submit" class="btn rounded-xl px-5 py-2.5 text-sm">Buscar</button>
             </div>
         </form>
@@ -688,11 +877,9 @@
         @isset($pokemon)
             <div class="fade-up">
                 <div class="pokemon-stage flex items-center justify-center p-6 mb-5" style="height: 240px;">
-                    <img
-                        src="{{ $pokemon['sprites']['other']['official-artwork']['front_default'] }}"
-                        alt="{{ $pokemon['name'] }}"
-                        class="pokemon-img max-h-full w-auto"
-                    >
+                    <img src="{{ $pokemon['sprites']['other']['official-artwork']['front_default'] }}"
+                         alt="{{ $pokemon['name'] }}"
+                         class="pokemon-img max-h-full w-auto">
                 </div>
 
                 <div class="flex items-baseline justify-between mb-4">
@@ -706,9 +893,7 @@
 
                 <div class="flex gap-2 mb-5">
                     @foreach($pokemon['types'] as $tipo)
-                        <span class="type-badge type-{{ $tipo['type']['name'] }}">
-                            {{ $tipo['type']['name'] }}
-                        </span>
+                        <span class="type-badge type-{{ $tipo['type']['name'] }}">{{ $tipo['type']['name'] }}</span>
                     @endforeach
                 </div>
 
@@ -742,11 +927,8 @@
 
                     @php
                         $statNames = [
-                            'hp' => 'HP',
-                            'attack' => 'Ataque',
-                            'defense' => 'Defesa',
-                            'special-attack' => 'At. Esp.',
-                            'special-defense' => 'Def. Esp.',
+                            'hp' => 'HP', 'attack' => 'Ataque', 'defense' => 'Defesa',
+                            'special-attack' => 'At. Esp.', 'special-defense' => 'Def. Esp.',
                             'speed' => 'Velocidade',
                         ];
                         $total = 0;
@@ -769,8 +951,7 @@
                             <span class="stat-number">{{ $value }}</span>
                             <div class="stat-bar">
                                 <div class="stat-fill {{ $tier }}"
-                                     style="width: {{ $percent }}%; animation-delay: {{ $i * 0.08 }}s;">
-                                </div>
+                                     style="width: {{ $percent }}%; animation-delay: {{ $i * 0.08 }}s;"></div>
                             </div>
                         </div>
                     @endforeach
@@ -791,25 +972,70 @@
     </div>
 
     <script>
-        // Folhas caindo
-        const leavesContainer = document.getElementById('leaves');
-        const leafColors = ['#22c55e', '#4ade80', '#86efac', '#fbbf24', '#f97316'];
-        for (let i = 0; i < 10; i++) {
-            const leaf = document.createElement('div');
-            leaf.className = 'leaf';
-            leaf.style.left = Math.random() * 100 + 'vw';
-            leaf.style.animationDuration = (10 + Math.random() * 10) + 's';
-            leaf.style.animationDelay = -(Math.random() * 15) + 's';
-            const color = leafColors[Math.floor(Math.random() * leafColors.length)];
-            leaf.innerHTML = `
-                <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 5 Q5 15 10 30 Q20 35 30 30 Q35 15 20 5 Z"
-                          fill="${color}" stroke="#1a1a1a" stroke-width="1.5" opacity="0.7"/>
-                    <path d="M20 5 L20 35" stroke="#1a1a1a" stroke-width="1" opacity="0.5"/>
-                </svg>
-            `;
-            leavesContainer.appendChild(leaf);
+        // ============ PARALLAX MULTICAMADA ============
+        const layers = document.querySelectorAll('.lab-layer');
+        let mouseX = 0, mouseY = 0;
+        let currentX = 0, currentY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        function animateParallax() {
+            currentX += (mouseX - currentX) * 0.08;
+            currentY += (mouseY - currentY) * 0.08;
+
+            layers.forEach(layer => {
+                const depth = parseFloat(layer.dataset.depth);
+                const translateX = -currentX * 100 * depth;
+                const translateY = -currentY * 100 * depth;
+                layer.style.transform = `translate(${translateX}px, ${translateY}px)`;
+            });
+
+            requestAnimationFrame(animateParallax);
         }
+        animateParallax();
+
+        // ============ POKÉBOLAS CLICÁVEIS ============
+        document.querySelectorAll('.holder-ball').forEach(ball => {
+            ball.style.pointerEvents = 'auto';
+            ball.style.cursor = 'pointer';
+            ball.addEventListener('click', (e) => {
+                e.stopPropagation();
+                ball.style.animation = 'none';
+                ball.style.transition = 'transform 0.3s';
+                ball.style.transform = 'scale(1.3) rotate(20deg)';
+                setTimeout(() => {
+                    ball.style.transform = 'scale(1) rotate(0deg)';
+                    setTimeout(() => {
+                        ball.style.animation = '';
+                    }, 300);
+                }, 300);
+            });
+        });
+
+        // ============ PARTÍCULAS DE DADOS ============
+        const particles = document.getElementById('data-particles');
+        const codes = ['0x4A9F', 'DNA++', 'SCAN', '0xFF', 'HP:45', 'ATK:49', 'DEF:49', '>>>', '0x7B3', 'DATA', 'SYNC', 'REC+'];
+        for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'data-particle';
+            p.textContent = codes[Math.floor(Math.random() * codes.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = (10 + Math.random() * 8) + 's';
+            p.style.animationDelay = -(Math.random() * 15) + 's';
+            p.style.fontSize = (8 + Math.random() * 4) + 'px';
+            particles.appendChild(p);
+        }
+
+        // ============ HOLOFOTE SEGUE O MOUSE ============
+        const light = document.querySelector('.lab-light');
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) * 100;
+            light.style.left = x + '%';
+            light.style.transform = 'translateX(-50%)';
+        });
     </script>
 
 </body>
