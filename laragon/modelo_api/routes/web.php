@@ -1,8 +1,16 @@
 <?php
 
+use App\Http\Controllers\pokemon_controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
+
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/pokedex', [pokemon_controller::class, 'index']);
 
 //* Exemplo 1 - GET (Pokemon)
 Route::get('/pokemon/{nome}', function ($nome) {
@@ -22,6 +30,7 @@ Route::get('/pokemon/{nome}', function ($nome) {
     return response()->json(['erro' => 'Pokemon não Encontrado'],404);
 });
 
+
 //* Exemplo 2 - POST (Pokemon)
 Route::post('/pokemon/novo', function (Request $request) {
     $dados = $request -> validate([
@@ -37,6 +46,7 @@ Route::post('/pokemon/novo', function (Request $request) {
     ], 201);
 
 });
+
 
 //* Exemplo 1  - GET (User)
 Route::get('/user/{id}', function ($id) {
@@ -57,6 +67,7 @@ Route::get('/user/{id}', function ($id) {
     return response()->json(['Erro'=> 'Usuario não Encontrado'],404);
 });
 
+
 //* Exemplo 2 - POST (User)
 Route::post('/user/novo', function (Request $request) {
     $dados = $request -> validate([
@@ -74,6 +85,3 @@ Route::post('/user/novo', function (Request $request) {
 
 });
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
