@@ -411,17 +411,7 @@ async function cadastrarPokemon() {
     } catch(e){showToast('Erro de conexão',true);}
 }
 
-// ── BANCO + IMAGENS LOCAIS ──
-const imagensPokemon = {
-    'volthorn': '/images/pokemons/Volthorn.png',
-    'glacifera': '/images/pokemons/Glacifera.png',
-    'pyrosnak': '/images/pokemons/Pyrosnak.png'
-};
-
-function getImagemPokemon(nome) {
-    return imagensPokemon[nome?.toLowerCase()] || null;
-}
-
+// ── BANCO + IMAGEM VINDO DO BANCO DE DADOS ──
 function escaparTexto(txt) {
     return String(txt ?? '')
         .replaceAll('&','&amp;')
@@ -446,9 +436,9 @@ async function carregarBanco() {
         }
 
         grid.innerHTML=d.pokemons.map((p,i)=>{
-            const img = getImagemPokemon(p.nome);
             const nomeSeguro = escaparTexto(p.nome);
             const tipoSeguro = escaparTexto(p.tipo);
+            const imagemSeguro = escaparTexto(p.imagem);
 
             return `
             <div class="banco-card" id="card-${p.id}" style="animation-delay:${i*0.05}s">
@@ -456,8 +446,8 @@ async function carregarBanco() {
 
                 <div class="bc-art" id="art-${p.id}">
                     ${
-                        img
-                        ? `<img src="${img}" alt="${nomeSeguro}">`
+                        p.imagem
+                        ? `<img src="${imagemSeguro}" alt="${nomeSeguro}">`
                         : `<span style="font-size:3rem">${getTipoEmoji(p.tipo)}</span>`
                     }
                 </div>
