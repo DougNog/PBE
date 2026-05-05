@@ -1,52 +1,544 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Criar conta no MaintSys - Sistema de gestão de manutenção inteligente.">
+    <meta name="theme-color" content="#f5d547">
+    
+    <title>Criar Conta - {{ config('app.name', 'MaintSys') }}</title>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23f5d547'/><text x='50' y='65' font-size='70' font-weight='bold' text-anchor='middle' fill='%23111'>☼</text></svg>">
+    
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800,900" rel="stylesheet" />
+
+    <style>
+        :root {
+            --bg: #0b0d12;
+            --bg-2: #11141b;
+            --text: #f7f2e8;
+            --muted: #9ca3af;
+            --yellow: #f5d547;
+            --yellow-2: #ffe45c;
+            --border: rgba(255, 255, 255, 0.12);
+            --error: #ff6b6b;
+            --success: #51cf66;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Instrument Sans', Arial, sans-serif;
+            background:
+                radial-gradient(circle at top center, rgba(245, 213, 71, 0.08), transparent 35%),
+                linear-gradient(180deg, var(--bg), #07080c);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ==================== NAVBAR ==================== */
+        .navbar {
+            width: 100%;
+            height: 86px;
+            padding: 0 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: rgba(11, 13, 18, 0.88);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text);
+            font-weight: 900;
+            font-size: 24px;
+            letter-spacing: 0.5px;
+            transition: 0.2s ease;
+        }
+
+        .brand:hover {
+            color: var(--yellow);
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: var(--yellow);
+            color: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 20px;
+            transition: 0.2s ease;
+        }
+
+        .brand:hover .brand-icon {
+            transform: scale(1.05) rotate(10deg);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-link {
+            color: #c9d1d9;
+            font-size: 15px;
+            font-weight: 500;
+            transition: 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--yellow);
+        }
+
+        .btn-top {
+            background: var(--yellow);
+            color: #111;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 800;
+            transition: 0.2s ease;
+            border: 1px solid var(--yellow);
+        }
+
+        .btn-top:hover {
+            background: var(--yellow-2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(245, 213, 71, 0.2);
+        }
+
+        /* ==================== CONTAINER ==================== */
+        .auth-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 24px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 48px 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: var(--yellow);
+            color: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 32px;
+            margin: 0 auto 32px;
+        }
+
+        .auth-title {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .auth-subtitle {
+            color: var(--muted);
+            font-size: 15px;
+            text-align: center;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 15px;
+            font-family: 'Instrument Sans', Arial, sans-serif;
+            transition: 0.2s ease;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--yellow);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(245, 213, 71, 0.1);
+        }
+
+        .form-group input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .form-error {
+            font-size: 13px;
+            color: var(--error);
+            margin-top: 6px;
+            display: none;
+        }
+
+        .form-group input:invalid:not(:placeholder-shown) ~ .form-error {
+            display: block;
+        }
+
+        .form-group.has-error input {
+            border-color: var(--error);
+        }
+
+        .form-group.has-error .form-error {
+            display: block;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--yellow);
+            color: #111;
+            border: 1px solid var(--yellow);
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s ease;
+            margin-top: 28px;
+        }
+
+        .btn-submit:hover {
+            background: var(--yellow-2);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(245, 213, 71, 0.3);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 28px 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .auth-footer a {
+            color: var(--yellow);
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .auth-footer a:hover {
+            color: var(--yellow-2);
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: var(--error);
+            display: block;
+        }
+
+        .alert-success {
+            background: rgba(81, 207, 102, 0.1);
+            border: 1px solid rgba(81, 207, 102, 0.3);
+            color: var(--success);
+            display: block;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 20px;
+                height: 70px;
+            }
+
+            .brand {
+                font-size: 20px;
+            }
+
+            .brand-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+
+            .nav-right {
+                gap: 12px;
+            }
+
+            .nav-link {
+                display: none;
+            }
+
+            .btn-top {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+
+            .auth-container {
+                padding: 40px 16px;
+            }
+
+            .auth-card {
+                padding: 32px 24px;
+                border-radius: 16px;
+            }
+
+            .auth-title {
+                font-size: 24px;
+            }
+
+            .auth-subtitle {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 0 16px;
+            }
+
+            .brand {
+                font-size: 18px;
+                gap: 8px;
+            }
+
+            .brand-icon {
+                width: 28px;
+                height: 28px;
+            }
+
+            .auth-card {
+                padding: 24px 16px;
+            }
+
+            .auth-title {
+                font-size: 22px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .btn-submit {
+                margin-top: 20px;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="{{ url('/') }}" class="brand" aria-label="MaintSys - Voltar para home">
+            <span class="brand-icon">☼</span>
+            <span>MaintSys</span>
+        </a>
+
+        <nav class="nav-right" aria-label="Navegação">
+            <a href="{{ url('/') }}" class="nav-link">Home</a>
+            
+            @auth
+                <a href="{{ route('dashboard') }}" class="btn-top">
+                    Dashboard
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="nav-link">
+                    Entrar
+                </a>
+
+                <a href="{{ route('register') }}" class="btn-top">
+                    Criar conta
+                </a>
+            @endauth
+        </nav>
+    </header>
+
+    <main class="auth-container">
+        <div class="auth-card">
+            <div class="auth-icon">☼</div>
+            
+            <h1 class="auth-title">Criar Conta</h1>
+            <p class="auth-subtitle">
+                Junte-se ao MaintSys e comece a gerenciar sua manutenção de forma inteligente
+            </p>
+
+            <form method="POST" action="{{ route('register') }}" novalidate>
+                @csrf
+
+                @if ($errors->any())
+                    <div class="alert alert-error">
+                        <strong>Erro ao registrar:</strong>
+                        <ul style="margin-top: 8px; margin-left: 20px;">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input 
+                        id="name"
+                        type="text" 
+                        name="name" 
+                        value="{{ old('name') }}"
+                        placeholder="Seu nome completo"
+                        required 
+                        autofocus
+                    />
+                    <span class="form-error">Por favor, insira um nome válido</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Endereço de Email</label>
+                    <input 
+                        id="email"
+                        type="email" 
+                        name="email" 
+                        value="{{ old('email') }}"
+                        placeholder="seu@email.com"
+                        required
+                    />
+                    <span class="form-error">Por favor, insira um email válido</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input 
+                        id="password"
+                        type="password" 
+                        name="password"
+                        placeholder="Mínimo 8 caracteres"
+                        required 
+                        minlength="8"
+                    />
+                    <span class="form-error">A senha deve ter no mínimo 8 caracteres</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="password_confirmation">Confirmar Senha</label>
+                    <input 
+                        id="password_confirmation"
+                        type="password" 
+                        name="password_confirmation"
+                        placeholder="Repita sua senha"
+                        required
+                        minlength="8"
+                    />
+                    <span class="form-error">As senhas não conferem</span>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Criar Conta
+                </button>
+            </form>
+
+            <div class="auth-divider">ou</div>
+
+            <p class="auth-footer">
+                Já tem conta? 
+                <a href="{{ route('login') }}">Entre aqui</a>
+            </p>
         </div>
+    </main>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+</body>
+</html>

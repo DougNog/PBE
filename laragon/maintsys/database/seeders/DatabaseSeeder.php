@@ -3,44 +3,42 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
-use App\Models\User;
-use App\Models\Clientes;
-use App\Models\Fornecedor;
-use App\Models\Estoque;
-use App\Models\Pedido;
+use App\Models\Tecnico;
+use App\Models\Maquina;
+use App\Models\OrdemServico;
+use App\Models\HistoricoManutencao;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     public function run(): void
     {
-        // CLIENTES
-        Clientes::factory(15)->create();
+        // Técnicos
+        $tecnicos = Tecnico::factory()->count(10)->create();
 
-        Clientes::factory()->create([
-            'nome' => 'Douglas',
-            'cpf' => '123.456.789-00',
-            'telefone' => '(19) 99999-9999',
-            'reserva' => 1,
-        ]);
+        // Máquinas
+        $maquinas = Maquina::factory()->count(15)->create();
 
-        // FORNECEDORES
-        Fornecedor::factory(10)->create();
+        // Ordens de Serviço
+        $ordens = OrdemServico::factory()
+            ->count(30)
+            ->make()
+            ->each(function ($ordem) use ($maquinas, $tecnicos) {
+                $ordem->maquina_id = $maquinas->random()->id;
+                $ordem->tecnico_id = $tecnicos->random()->id;
+                $ordem->save();
+            });
 
-        // ESTOQUE
-        Estoque::factory(30)->create();
+        // Históricos de Manutenção
+        HistoricoManutencao::factory()
+            ->count(25)
+            ->make()
+            ->each(function ($historico) use ($ordens) {
+                $ordem = $ordens->random();
 
-        // PEDIDOS
-        Pedido::factory(20)->create();
-
-        // ADMIN
-        User::factory()->create([
-            'name' => 'Confecção Douglas',
-            'email' => 'admin@confeccao.com',
-            'password' => bcrypt('123456'),
-        ]);
+                $historico->ordem_id = $ordem->id;
+                $historico->maquina_id = $ordem->maquina_id;
+                $historico->tecnico_id = $ordem->tecnico_id;
+                $historico->save();
+            });
     }
 }
