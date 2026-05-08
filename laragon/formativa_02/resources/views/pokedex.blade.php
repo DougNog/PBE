@@ -191,15 +191,6 @@
                     <label>Ataque</label>
                     <input type="number" id="f-ataque" placeholder="ex: 88" min="1" max="255" oninput="atualizarPreview()">
                 </div>
-                <div class="field">
-                    <label>Imagem do Pokémon</label>
-                    <select id="f-imagem">
-                        <option value="">Sem imagem</option>
-                        <option value="/images/pokemons/Volthorn.png">⚡ Volthorn</option>
-                        <option value="/images/pokemons/Glacifera.png">❄️ Glacifera</option>
-                        <option value="/images/pokemons/Pyrosnak.png">🔥 Pyrosnak</option>
-                    </select>
-                </div>
                 <button class="btn btn-primary btn-full" onclick="cadastrarPokemon()">Cadastrar no Banco</button>
             </div>
             <div>
@@ -211,9 +202,9 @@
                 <div class="form-card" style="padding:24px">
                     <p style="font-size:0.8rem;color:var(--muted);margin-bottom:16px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Atalhos — Pokémons IA</p>
                     <div style="display:flex;flex-direction:column;gap:10px">
-                        <button class="btn btn-ghost" onclick="preencherIA('Volthorn','Elétrico',88,'/images/pokemons/Volthorn.png')">⚡ Volthorn — Elétrico / ATK 88</button>
-                        <button class="btn btn-ghost" onclick="preencherIA('Glacifera','Gelo',72,'/images/pokemons/Glacifera.png')">❄️ Glacifera — Gelo / ATK 72</button>
-                        <button class="btn btn-ghost" onclick="preencherIA('Pyrosnak','Fogo',95,'/images/pokemons/Pyrosnak.png')">🔥 Pyrosnak — Fogo / ATK 95</button>
+                        <button class="btn btn-ghost" onclick="preencherIA('Volthorn','Elétrico',88)">⚡ Volthorn — Elétrico / ATK 88</button>
+                        <button class="btn btn-ghost" onclick="preencherIA('Glacifera','Gelo',72)">❄️ Glacifera — Gelo / ATK 72</button>
+                        <button class="btn btn-ghost" onclick="preencherIA('Pyrosnak','Fogo',95)">🔥 Pyrosnak — Fogo / ATK 95</button>
                     </div>
                 </div>
             </div>
@@ -309,11 +300,10 @@ function atualizarPreview(){
     document.getElementById('prev-ball').style.background=tipo?getTipoColor(tipo)+'18':'rgba(255,255,255,0.04)';
     document.getElementById('prev-tipo').innerHTML=tipo?`<span class="type-badge ${getTipoClass(tipo)}">${tipo}</span>`:'';
 }
-function preencherIA(nome,tipo,ataque,imagem){
+function preencherIA(nome,tipo,ataque){
     document.getElementById('f-nome').value=nome;
     document.getElementById('f-tipo').value=tipo;
     document.getElementById('f-ataque').value=ataque;
-    document.getElementById('f-imagem').value=imagem;
     atualizarPreview();
 }
 
@@ -322,17 +312,15 @@ async function cadastrarPokemon(){
     const nome=document.getElementById('f-nome').value.trim();
     const tipo=document.getElementById('f-tipo').value;
     const ataque=parseInt(document.getElementById('f-ataque').value);
-    const imagem=document.getElementById('f-imagem').value;
     if(!nome||!tipo||!ataque) return showToast('Preencha todos os campos',true);
     try{
-        const r=await fetch('/pokemon/novo',{method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'XMLHttpRequest'},body:JSON.stringify({nome,tipo,ataque,imagem})});
+        const r=await fetch('/pokemon/novo',{method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'XMLHttpRequest'},body:JSON.stringify({nome,tipo,ataque})});
         const d=await r.json();
         if(!r.ok) return showToast('Erro ao cadastrar',true);
         showToast(`✅ ${nome} salvo! ID #${d.id_banco}`);
         document.getElementById('f-nome').value='';
         document.getElementById('f-tipo').value='';
         document.getElementById('f-ataque').value='';
-        document.getElementById('f-imagem').value='';
         atualizarPreview();
     }catch(e){showToast('Erro de conexão',true);}
 }

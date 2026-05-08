@@ -46,8 +46,17 @@ Route::post('/pokemon/novo', function (Request $request) {
         'nome'   => 'required|string|min:3',
         'tipo'   => 'required|string',
         'ataque' => 'required|integer',
-        'imagem' => 'nullable|string',
     ]);
+
+    // Imagens automáticas para os Pokémons IA
+    $imagensFixas = [
+        'volthorn'  => '/images/pokemons/Volthorn.png',
+        'glacifera' => '/images/pokemons/Glacifera.png',
+        'pyrosnak'  => '/images/pokemons/Pyrosnak.png',
+    ];
+
+    $nomeKey = strtolower(trim($dados['nome']));
+    $dados['imagem'] = $imagensFixas[$nomeKey] ?? null;
 
     $pokemon = Pokemon::create($dados);
 
