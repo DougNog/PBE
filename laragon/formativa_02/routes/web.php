@@ -46,6 +46,7 @@ Route::post('/pokemon/novo', function (Request $request) {
         'nome'   => 'required|string|min:3',
         'tipo'   => 'required|string',
         'ataque' => 'required|integer',
+        'imagem' => 'nullable|string',
     ]);
 
     $pokemon = Pokemon::create($dados);

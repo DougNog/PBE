@@ -7,16 +7,16 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up(): void
-    {
-        Schema::table('pokemons', function (Blueprint $table) {
-            $table->string('imagem')->nullable()->after('ataque');
-        });
-    }
+{
+    Schema::table('pokemons', function (Blueprint $table) {
+        $table->string('imagem')->nullable()->after('ataque');
+    });
+}
 
-    public function down(): void
-    {
-        Schema::table('pokemons', function (Blueprint $table) {
-            $table->dropColumn('imagem');
-        });
-    }
+public function down(): void
+{
+    Schema::table('pokemons', function (Blueprint $table) {
+        $table->dropColumn('imagem');
+    });
+}
 };
