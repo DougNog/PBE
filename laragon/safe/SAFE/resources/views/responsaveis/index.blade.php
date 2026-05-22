@@ -44,9 +44,11 @@
             <a href="{{ route('responsaveis.edit', $r) }}" class="flex-1 text-center bg-senai-50 hover:bg-senai-100 text-senai-700 font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5">
                 <i class="ph ph-pencil-simple"></i> Editar
             </a>
-            <form method="POST" action="{{ route('responsaveis.destroy', $r) }}" class="flex-1">
+            <form method="POST" action="{{ route('responsaveis.destroy', $r) }}" class="flex-1"
+                  id="form-del-resp-{{ $r->id }}">
                 @csrf @method('DELETE')
-                <button type="submit" onclick="return confirm('Remover este responsável?')"
+                <button type="button"
+                        @click="$store.confirmModal.show('Remover responsável', 'Tem certeza que deseja remover este responsável?', 'form-del-resp-{{ $r->id }}')"
                         class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5">
                     <i class="ph ph-trash"></i> Remover
                 </button>

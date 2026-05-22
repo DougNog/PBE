@@ -54,6 +54,31 @@
         }
     </script>
 
+    {{-- Store global: modal de confirmação --}}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('confirmModal', {
+                open:    false,
+                title:   '',
+                message: '',
+                type:    'danger', // 'danger' | 'warning'
+                formId:  null,
+                show(title, message, formId, type = 'danger') {
+                    this.title   = title;
+                    this.message = message;
+                    this.formId  = formId;
+                    this.type    = type;
+                    this.open    = true;
+                },
+                confirm() {
+                    if (this.formId) document.getElementById(this.formId).submit();
+                    this.open = false;
+                },
+                cancel() { this.open = false; }
+            });
+        });
+    </script>
+
     <script defer src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
@@ -230,6 +255,59 @@
     <footer class="text-center text-xs text-slate-400 py-4 border-t border-slate-100">
         SAFE · Sistema de Autorização e Fluxo Escolar · <span class="text-senai-600 font-semibold">SENAI</span>
     </footer>
+</div>
+
+{{-- ============================================================
+     MODAL DE CONFIRMAÇÃO GLOBAL
+============================================================ --}}
+<div x-show="$store.confirmModal.open"
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @keydown.escape.window="$store.confirmModal.cancel()"
+     @click="$store.confirmModal.cancel()"
+     x-cloak
+     class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-ink-900/60 backdrop-blur-sm">
+
+    <div x-show="$store.confirmModal.open"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+         x-transition:leave-end="opacity-0 scale-95 translate-y-2"
+         @click.stop
+         class="bg-white rounded-2xl shadow-xl border border-slate-100 w-full max-w-sm p-6">
+
+        <div class="flex items-start gap-4 mb-5">
+            <div :class="$store.confirmModal.type === 'danger' ? 'bg-rose-100' : 'bg-amber-100'"
+                 class="w-11 h-11 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                <i :class="$store.confirmModal.type === 'danger' ? 'text-rose-600' : 'text-amber-600'"
+                   class="ph ph-warning text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-slate-900 text-base leading-snug" x-text="$store.confirmModal.title"></h3>
+                <p class="text-sm text-slate-500 mt-1 leading-relaxed" x-text="$store.confirmModal.message"></p>
+            </div>
+        </div>
+
+        <div class="flex gap-3 justify-end">
+            <button @click="$store.confirmModal.cancel()" type="button"
+                    class="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+                Cancelar
+            </button>
+            <button @click="$store.confirmModal.confirm()" type="button"
+                    :class="$store.confirmModal.type === 'danger'
+                        ? 'from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 shadow-rose-500/20'
+                        : 'from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-amber-500/20'"
+                    class="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-br rounded-xl shadow-lg transition-all hover:-translate-y-0.5">
+                Confirmar
+            </button>
+        </div>
+    </div>
 </div>
 
 @stack('scripts')

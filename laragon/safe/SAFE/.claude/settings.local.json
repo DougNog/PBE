@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(php artisan *)",
-      "Bash(php -r \"echo file_exists\\('public/storage'\\) ? 'link ok' : 'link AUSENTE';\")"
-    ]
-  }
-}

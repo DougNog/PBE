@@ -109,21 +109,27 @@
                             <i class="ph ph-printer text-lg"></i>
                         </a>
                         @if($aut->status === 'ativa')
-                        <form method="POST" action="{{ route('autorizacoes.revogar', $aut) }}">
+                        <form method="POST" action="{{ route('autorizacoes.revogar', $aut) }}"
+                              id="form-revogar-{{ $aut->id }}">
                             @csrf @method('PATCH')
-                            <button class="p-1.5 text-orange-600 hover:bg-orange-50 rounded-lg" title="Revogar"
-                                    onclick="return confirm('Revogar esta autorização?')">
+                            <button type="button"
+                                    @click="$store.confirmModal.show('Revogar autorização', 'Tem certeza que deseja revogar esta autorização?', 'form-revogar-{{ $aut->id }}', 'warning')"
+                                    class="p-1.5 text-orange-600 hover:bg-orange-50 rounded-lg" title="Revogar">
                                 <i class="ph ph-x-circle text-lg"></i>
                             </button>
                         </form>
                         @endif
-                        <form method="POST" action="{{ route('autorizacoes.destroy', $aut) }}">
+                        @if(auth()->user()->isAdmin())
+                        <form method="POST" action="{{ route('autorizacoes.destroy', $aut) }}"
+                              id="form-excluir-{{ $aut->id }}">
                             @csrf @method('DELETE')
-                            <button class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg" title="Excluir"
-                                    onclick="return confirm('Excluir esta autorização?')">
+                            <button type="button"
+                                    @click="$store.confirmModal.show('Excluir autorização', 'Tem certeza que deseja excluir permanentemente esta autorização? Esta ação não pode ser desfeita.', 'form-excluir-{{ $aut->id }}')"
+                                    class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg" title="Excluir">
                                 <i class="ph ph-trash text-lg"></i>
                             </button>
                         </form>
+                        @endif
                     </div>
                 </td>
             </tr>

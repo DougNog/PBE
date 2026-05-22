@@ -80,10 +80,11 @@
 
         {{-- Recusar --}}
         <form method="POST" action="{{ route('portaria.recusar', $aluno) }}"
-              onsubmit="return confirm('Recusar a saída de {{ $aluno->nome }}? A autorização será cancelada.')">
+              id="form-recusar">
             @csrf
-            <button type="submit"
-                class="w-full bg-white border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2">
+            <button type="button"
+                    @click="$store.confirmModal.show('Recusar saída', 'A autorização será cancelada. Esta ação não pode ser desfeita.', 'form-recusar', 'warning')"
+                    class="w-full bg-white border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-400 font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2">
                 <i class="ph-fill ph-x-circle text-xl"></i>
                 Recusar saída
             </button>

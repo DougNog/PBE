@@ -31,9 +31,8 @@
 </div>
 
 {{-- Stats cards --}}
-<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
     <x-stat-card label="Alunos Ativos"        value="{{ $stats['total_alunos'] }}"        icon="ph-student"           color="brand" />
-    <x-stat-card label="Entradas Hoje"        value="{{ $stats['entradas_hoje'] }}"       icon="ph-sign-in"           color="green" />
     <x-stat-card label="Saídas Hoje"          value="{{ $stats['saidas_hoje'] }}"         icon="ph-sign-out"          color="orange" />
     <x-stat-card label="Movimentações Hoje"   value="{{ $stats['movimentacoes_hoje'] }}"  icon="ph-arrows-left-right" color="purple"
         :trend="$stats['trend_movimentacoes'] !== null ? abs($stats['trend_movimentacoes']) . '%' : null"

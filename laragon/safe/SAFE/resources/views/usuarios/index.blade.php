@@ -56,9 +56,11 @@
                             <i class="ph ph-pencil text-lg"></i>
                         </a>
                         <form method="POST" action="{{ route('usuarios.destroy', $prof) }}"
-                              onsubmit="return confirm('Remover {{ $prof->name }}?')">
+                              id="form-del-prof-{{ $prof->id }}">
                             @csrf @method('DELETE')
-                            <button class="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Remover">
+                            <button type="button"
+                                    @click="$store.confirmModal.show('Remover professor', 'Tem certeza que deseja remover este professor? Esta ação não pode ser desfeita.', 'form-del-prof-{{ $prof->id }}')"
+                                    class="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Remover">
                                 <i class="ph ph-trash text-lg"></i>
                             </button>
                         </form>

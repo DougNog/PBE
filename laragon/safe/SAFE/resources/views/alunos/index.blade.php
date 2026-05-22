@@ -56,9 +56,11 @@
                 <i class="ph ph-pencil-simple"></i> Editar
             </a>
             <form method="POST" action="{{ route('alunos.destroy', $aluno) }}" class="flex-1"
-                  x-data @submit.prevent="if(confirm('Desativar este aluno?')) $event.target.submit()">
+                  id="form-del-aluno-{{ $aluno->id }}">
                 @csrf @method('DELETE')
-                <button type="submit" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5">
+                <button type="button"
+                        @click="$store.confirmModal.show('Desativar aluno', 'Tem certeza que deseja desativar este aluno?', 'form-del-aluno-{{ $aluno->id }}')"
+                        class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5">
                     <i class="ph ph-trash"></i> Desativar
                 </button>
             </form>
