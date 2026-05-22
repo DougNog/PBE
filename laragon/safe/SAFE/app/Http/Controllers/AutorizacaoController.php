@@ -48,7 +48,7 @@ class AutorizacaoController extends Controller
             'professor_id'    => 'nullable|exists:users,id',
             'validade_inicio' => 'required|date',
             'motivo'          => 'required|string|max:500',
-            'faltas'          => 'required|integer|min:0|max:20',
+            'faltas'          => 'required|integer|min:1|max:5',
         ]);
 
         $horario = \Carbon\Carbon::parse($data['validade_inicio']);

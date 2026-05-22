@@ -77,11 +77,14 @@ class AlunoController extends Controller
     public function update(Request $request, Aluno $aluno): RedirectResponse
     {
         $data = $request->validate([
-            'nome'      => 'required|string|max:255',
-            'matricula' => "required|string|max:50|unique:alunos,matricula,{$aluno->id}",
-            'turma'     => 'required|string|max:50',
-            'foto'      => 'nullable|image|max:2048',
-            'ativo'     => 'sometimes|boolean',
+            'nome'           => 'required|string|max:255',
+            'matricula'      => "required|string|max:50|unique:alunos,matricula,{$aluno->id}",
+            'turma'          => 'required|string|max:50',
+            'foto'           => 'nullable|image|max:2048',
+            'ativo'          => 'sometimes|boolean',
+            'responsaveis'   => 'nullable|array',
+            'responsaveis.*' => 'nullable|exists:responsaveis,id',
+            'parentescos'    => 'nullable|array',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -90,11 +93,17 @@ class AlunoController extends Controller
             }
             $data['foto_path'] = $request->file('foto')->store('alunos', 'public');
         }
-        unset($data['foto']);
+        unset($data['foto'], $data['responsaveis'], $data['parentescos']);
 
         $data['ativo'] = $request->boolean('ativo');
 
         $aluno->update($data);
+
+        $pivot = [];
+        foreach (array_filter($request->responsaveis ?? []) as $i => $responsavelId) {
+            $pivot[$responsavelId] = ['parentesco' => $request->parentescos[$i] ?? 'Responsável'];
+        }
+        $aluno->responsaveis()->sync($pivot);
 
         return redirect()->route('alunos.index')->with('success', 'Aluno atualizado com sucesso.');
     }

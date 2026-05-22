@@ -64,8 +64,12 @@
                         <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
                             Faltas a receber
                         </label>
-                        <input type="number" name="faltas" value="{{ old('faltas', 0) }}" min="0" max="20" required
+                        <select name="faltas" required
                             class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-senai-100 focus:border-senai-500">
+                            @foreach(range(1, 5) as $n)
+                                <option value="{{ $n }}" {{ old('faltas', 1) == $n ? 'selected' : '' }}>{{ $n }} {{ $n === 1 ? 'falta' : 'faltas' }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 

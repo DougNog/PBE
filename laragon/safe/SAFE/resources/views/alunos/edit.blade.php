@@ -58,6 +58,72 @@
             </div>
         </div>
 
+        {{-- Card: responsáveis --}}
+        @php
+            $slotsIniciais = $aluno->responsaveis->map(fn($r) => [
+                'uid'           => 'e' . $r->id,
+                'responsavelId' => (string) $r->id,
+                'parentesco'    => $r->pivot->parentesco,
+            ])->values();
+        @endphp
+
+        <div class="bg-white rounded-2xl shadow-soft border border-slate-100/80 p-6"
+             x-data="{
+                slots: @json($slotsIniciais),
+                nextId: 1,
+                add() { this.slots.push({ uid: 'n' + (this.nextId++), responsavelId: '', parentesco: 'Responsável' }); },
+                remove(uid) { this.slots = this.slots.filter(s => s.uid !== uid); }
+             }">
+            <h3 class="font-bold text-slate-800 mb-1 flex items-center gap-2">
+                <i class="ph ph-users-three text-senai-600"></i>
+                Responsáveis Vinculados
+                <span class="text-xs font-normal text-slate-400">(opcional)</span>
+            </h3>
+            <p class="text-xs text-slate-500 mb-5">Altere, adicione ou remova responsáveis vinculados ao aluno.</p>
+
+            <div class="space-y-3">
+                <template x-for="slot in slots" :key="slot.uid">
+                    <div class="flex gap-3 items-center">
+                        <select name="responsaveis[]" x-model="slot.responsavelId"
+                                class="flex-1 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-senai-100 focus:border-senai-500">
+                            <option value="">— Selecione um responsável —</option>
+                            @foreach($responsaveis as $r)
+                                <option value="{{ $r->id }}">{{ $r->nome }} · {{ $r->telefone }}</option>
+                            @endforeach
+                        </select>
+                        <select name="parentescos[]" x-model="slot.parentesco"
+                                class="w-40 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-senai-100 focus:border-senai-500">
+                            <option value="Mãe">Mãe</option>
+                            <option value="Pai">Pai</option>
+                            <option value="Responsável">Responsável</option>
+                            <option value="Avó">Avó</option>
+                            <option value="Avô">Avô</option>
+                            <option value="Tia">Tia</option>
+                            <option value="Tio">Tio</option>
+                            <option value="Madrasta">Madrasta</option>
+                            <option value="Padrasto">Padrasto</option>
+                            <option value="Irmã">Irmã</option>
+                            <option value="Irmão">Irmão</option>
+                            <option value="Tutor(a)">Tutor(a)</option>
+                        </select>
+                        <button type="button" @click="remove(slot.uid)"
+                                title="Remover responsável"
+                                class="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                            <i class="ph ph-trash text-lg"></i>
+                        </button>
+                    </div>
+                </template>
+
+                <div x-show="slots.length === 0" class="py-4 text-center text-sm text-slate-400 border border-dashed border-slate-200 rounded-xl">
+                    Nenhum responsável vinculado
+                </div>
+            </div>
+
+            <button type="button" @click="add()" class="mt-3 text-xs text-senai-600 hover:text-senai-700 font-semibold flex items-center gap-1">
+                <i class="ph ph-plus-circle"></i> Adicionar responsável
+            </button>
+        </div>
+
         <div class="flex gap-3">
             <a href="{{ route('alunos.index') }}"
                 class="flex-1 text-center bg-white border-2 border-slate-200 text-slate-700 font-semibold py-3 rounded-xl hover:bg-slate-50">

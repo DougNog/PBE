@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         ]);
         User::create([
             'name'     => 'Prof. Samuel',
-            'email'    => 'professor@safe.edu.br',
+            'email'    => 'samuel@safe.edu.br',
             'password' => Hash::make('password'),
             'role'     => 'professor',
         ]);

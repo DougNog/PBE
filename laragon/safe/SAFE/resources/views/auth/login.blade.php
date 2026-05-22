@@ -101,7 +101,7 @@
                     <label class="block text-sm font-semibold text-ink-700 mb-1.5">Senha</label>
                     <div class="relative" x-data="{ show: false }">
                         <i class="ph ph-lock-key absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg"></i>
-                        <input :type="show ? 'text' : 'password'" name="password" required
+                        <input type="password" :type="show ? 'text' : 'password'" name="password" required
                             class="w-full pl-11 pr-11 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-senai-100 focus:border-senai-500 transition-all bg-slate-50 focus:bg-white">
                         <button type="button" @click="show=!show" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                             <i class="ph" :class="show ? 'ph-eye-slash' : 'ph-eye'"></i>
@@ -137,7 +137,7 @@
                     </div>
                     <div class="flex items-center justify-between">
                         <span class="text-slate-500">Professor</span>
-                        <code class="text-ink-800 bg-white px-2 py-0.5 rounded border border-slate-200">professor@safe.edu.br</code>
+                        <code class="text-ink-800 bg-white px-2 py-0.5 rounded border border-slate-200">samuel@safe.edu.br</code>
                     </div>
                     <div class="flex items-center justify-between pt-1 mt-1 border-t border-slate-200">
                         <span class="text-slate-500">Senha (todos)</span>

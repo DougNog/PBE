@@ -1,4 +1,5 @@
-﻿@extends('layouts.app')
+﻿
+@extends('layouts.app')
 @section('title', 'Novo Aluno')
 @section('subtitle', 'Cadastre um novo aluno no sistema')
 
@@ -32,6 +33,7 @@
                         <input type="file" name="foto" accept="image/*" class="hidden"
                                @change="previewFoto = URL.createObjectURL($event.target.files[0])">
                     </label>
+                    <p class="text-[10px] text-slate-400 mt-1 text-center">Clique para adicionar</p>
                 </div>
 
                 <div class="flex-1 space-y-4">
@@ -62,16 +64,17 @@
         {{-- Card: responsáveis --}}
         <div class="bg-white rounded-2xl shadow-soft border border-slate-100/80 p-6"
              x-data="{
-                slots: [{ id: 1 }, { id: 2 }],
-                nextId: 3,
+                slots: [],
+                nextId: 1,
                 add() { this.slots.push({ id: this.nextId++ }); },
-                remove(id) { if (this.slots.length > 2) this.slots = this.slots.filter(s => s.id !== id); }
+                remove(id) { this.slots = this.slots.filter(s => s.id !== id); }
              }">
             <h3 class="font-bold text-slate-800 mb-1 flex items-center gap-2">
                 <i class="ph ph-users-three text-senai-600"></i>
                 Vincular Responsáveis
+                <span class="text-xs font-normal text-slate-400">(opcional)</span>
             </h3>
-            <p class="text-xs text-slate-500 mb-5">Selecione os responsáveis e o parentesco <span class="text-senai-600 font-semibold">(mínimo 2)</span></p>
+            <p class="text-xs text-slate-500 mb-5">Selecione os responsáveis e o grau de parentesco. Pode ser adicionado depois.</p>
 
             <div class="space-y-3">
                 <template x-for="slot in slots" :key="slot.id">
@@ -99,19 +102,20 @@
                             <option value="Tutor(a)">Tutor(a)</option>
                         </select>
                         <button type="button" @click="remove(slot.id)"
-                                x-show="slots.length > 2"
-                                x-cloak
                                 title="Remover responsável"
                                 class="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors">
                             <i class="ph ph-trash text-lg"></i>
                         </button>
-                        <div x-show="slots.length <= 2" class="w-9 shrink-0"></div>
                     </div>
                 </template>
+
+                <div x-show="slots.length === 0" class="py-4 text-center text-sm text-slate-400 border border-dashed border-slate-200 rounded-xl">
+                    Nenhum responsável vinculado
+                </div>
             </div>
 
             <button type="button" @click="add()" class="mt-3 text-xs text-senai-600 hover:text-senai-700 font-semibold flex items-center gap-1">
-                <i class="ph ph-plus-circle"></i> Adicionar outro responsável
+                <i class="ph ph-plus-circle"></i> Adicionar responsável
             </button>
         </div>
 
