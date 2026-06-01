@@ -1,23 +1,21 @@
 <?php
 
-namespace App\Filament\Resources\Fornecedors\Pages;
+namespace App\Filament\Resources\Users\Pages;
 
-use App\Filament\Resources\Fornecedors\FornecedorResource;
+use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Hash;
 
-class EditFornecedor extends EditRecord
+class EditUser extends EditRecord
 {
-    protected static string $resource = FornecedorResource::class;
+    protected static string $resource = UserResource::class;
 
     private ?string $novaSenha = null;
 
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
             DeleteAction::make(),
         ];
     }
@@ -36,9 +34,7 @@ class EditFornecedor extends EditRecord
             return;
         }
 
-        $this->record->load('user');
-
-        $this->record->user?->update([
+        $this->record->update([
             'password' => Hash::make($this->novaSenha),
         ]);
     }

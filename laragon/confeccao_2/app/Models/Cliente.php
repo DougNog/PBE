@@ -10,11 +10,17 @@ class Cliente extends Model
     protected $table = 'clientes';
 
     protected $fillable = [
+        'user_id',
         'nome',
         'email',
         'telefone',
         'documento',
     ];
+
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function pedidos(): HasMany
     {

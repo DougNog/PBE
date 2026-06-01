@@ -10,24 +10,61 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class DashboardStats extends StatsOverviewWidget
 {
+    protected static ?int $sort = 1;
+
     protected function getStats(): array
     {
+        $clientesNoMes = Cliente::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        $clientesChart = collect(range(6, 0))
+            ->map(fn ($d) => Cliente::whereDate('created_at', now()->subDays($d))->count())
+            ->toArray();
+
+        $pedidosPendentes = Pedido::where('status', 'pendente')->count();
+
+        $pedidosChart = collect(range(6, 0))
+            ->map(fn ($d) => Pedido::whereDate('created_at', now()->subDays($d))->count())
+            ->toArray();
+
+        $receitaTotal = Pedido::where('status', '!=', 'cancelado')->sum('valor_total');
+
+        $receitaChart = collect(range(6, 0))
+            ->map(fn ($d) => (float) Pedido::where('status', '!=', 'cancelado')
+                ->whereDate('data_pedido', now()->subDays($d))
+                ->sum('valor_total'))
+            ->toArray();
+
+        $produtosEstoqueBaixo = Produto::where('estoque', '<', 10)->count();
+
         return [
-            Stat::make('Clientes', Cliente::count())
-                ->description('Total de clientes')
-                ->color('info'),
+            Stat::make('Total de Clientes', Cliente::count())
+                ->description('+' . $clientesNoMes . ' cadastrados este mês')
+                ->descriptionIcon('heroicon-m-arrow-trending-up')
+                ->color('info')
+                ->chart($clientesChart),
 
             Stat::make('Pedidos', Pedido::count())
-                ->description('Total de pedidos')
-                ->color('success'),
+                ->description($pedidosPendentes . ' pendentes de produção')
+                ->descriptionIcon('heroicon-m-clock')
+                ->color($pedidosPendentes > 0 ? 'warning' : 'success')
+                ->chart($pedidosChart),
 
-            Stat::make('Produtos', Produto::count())
-                ->description('Total de produtos')
-                ->color('warning'),
+            Stat::make('Receita Total', 'R$ ' . number_format($receitaTotal, 2, ',', '.'))
+                ->description('Pedidos não cancelados')
+                ->descriptionIcon('heroicon-m-banknotes')
+                ->color('success')
+                ->chart($receitaChart),
 
-            Stat::make('Valor em Pedidos', 'R$ ' . number_format(Pedido::sum('valor_total'), 2, ',', '.'))
-                ->description('Soma de todos os pedidos')
-                ->color('primary'),
+            Stat::make('Produtos em Estoque', Produto::count())
+                ->description($produtosEstoqueBaixo > 0
+                    ? $produtosEstoqueBaixo . ' com estoque baixo (< 10)'
+                    : 'Estoque saudável')
+                ->descriptionIcon($produtosEstoqueBaixo > 0
+                    ? 'heroicon-m-exclamation-triangle'
+                    : 'heroicon-m-check-circle')
+                ->color($produtosEstoqueBaixo > 0 ? 'danger' : 'success'),
         ];
     }
 }

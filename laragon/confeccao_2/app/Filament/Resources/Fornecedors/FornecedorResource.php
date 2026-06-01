@@ -6,11 +6,11 @@ use App\Filament\Resources\Fornecedors\Pages\CreateFornecedor;
 use App\Filament\Resources\Fornecedors\Pages\EditFornecedor;
 use App\Filament\Resources\Fornecedors\Pages\ListFornecedors;
 use App\Filament\Resources\Fornecedors\Pages\ViewFornecedor;
+use App\Filament\Resources\Fornecedors\Schemas\FornecedorForm;
 use App\Filament\Resources\Fornecedors\Schemas\FornecedorInfolist;
 use App\Filament\Resources\Fornecedors\Tables\FornecedorsTable;
 use App\Models\Fornecedor;
 use BackedEnum;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -34,26 +34,7 @@ class FornecedorResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                TextInput::make('nome')
-                    ->label('Nome')
-                    ->required()
-                    ->maxLength(255),
-
-                TextInput::make('email')
-                    ->label('E-mail')
-                    ->email()
-                    ->maxLength(255),
-
-                TextInput::make('telefone')
-                    ->label('Telefone')
-                    ->maxLength(20),
-
-                TextInput::make('empresa')
-                    ->label('Empresa')
-                    ->maxLength(255),
-            ]);
+        return FornecedorForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema

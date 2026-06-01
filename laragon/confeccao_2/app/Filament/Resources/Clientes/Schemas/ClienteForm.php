@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Clientes\Schemas;
 
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class ClienteForm
@@ -34,6 +34,25 @@ class ClienteForm
                             ->label('E-mail')
                             ->email()
                             ->maxLength(255)
+                            ->columnSpan(2),
+                    ]),
+
+                Section::make('Acesso ao Sistema')
+                    ->columns(2)
+                    ->description(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\CreateRecord
+                        ? 'Deixar em branco para gerar senha automaticamente'
+                        : 'Deixar em branco para manter a senha atual')
+                    ->schema([
+                        TextInput::make('password_input')
+                            ->label(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\CreateRecord
+                                ? 'Senha de acesso'
+                                : 'Nova senha')
+                            ->password()
+                            ->revealable()
+                            ->helperText('Mínimo de 8 caracteres')
+                            ->minLength(8)
+                            ->nullable()
+                            ->dehydrated(fn ($state) => filled($state))
                             ->columnSpan(2),
                     ]),
             ]);

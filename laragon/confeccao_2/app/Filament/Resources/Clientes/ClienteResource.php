@@ -6,11 +6,11 @@ use App\Filament\Resources\Clientes\Pages\CreateCliente;
 use App\Filament\Resources\Clientes\Pages\EditCliente;
 use App\Filament\Resources\Clientes\Pages\ListCliente;
 use App\Filament\Resources\Clientes\Pages\ViewCliente;
+use App\Filament\Resources\Clientes\Schemas\ClienteForm;
 use App\Filament\Resources\Clientes\Schemas\ClienteInfolist;
 use App\Filament\Resources\Clientes\Tables\ClientesTable;
 use App\Models\Cliente;
 use BackedEnum;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -31,22 +31,7 @@ class ClienteResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                TextInput::make('nome')
-                    ->label('Nome')
-                    ->required()
-                    ->maxLength(255),
-
-                TextInput::make('email')
-                    ->label('E-mail')
-                    ->email()
-                    ->maxLength(255),
-
-                TextInput::make('telefone')
-                    ->label('Telefone')
-                    ->maxLength(20),
-            ]);
+        return ClienteForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
